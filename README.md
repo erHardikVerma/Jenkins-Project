@@ -12,6 +12,45 @@ This repository contains a **Jenkins CI/CD pipeline** that automates the **build
 
 ### ✅ **Pipeline Stages**  
 - **🔹 Checkout Code (SCM Checkout)** – Fetches the latest code from GitHub using SSH authentication.  
-- **🔹 Build Stage** – Installs project dependencies using:  
-  ```sh
-  npm install
+### 🔹 **1. Build Stage** – Installs dependencies
+```sh
+npm install
+```
+
+### 🔹 **2. Test Stage** – Runs application health checks
+Since Jest is not used, this stage can include:
+- **Linting checks** (optional)
+- **Basic server response verification**
+
+```sh
+# Example: Check if Node.js server is running
+curl -f http://localhost:3000/ || echo "Server is not responding"
+```
+
+### 🔹 **3. Deliver Stage (Deployment Step)**
+**a) Builds the React app:**
+```sh
+npm run build
+```
+**b) Runs the application in the background:**
+```sh
+npm start &
+```
+
+### 🔹 **4. Manual Approval for Deployment**
+- Ensures controlled releases before stopping the current running app.
+- This step allows manual intervention before final deployment.
+
+### 🔹 **5. Cleanup & Process Termination**
+- Safely stops the currently running app before a new deployment:
+```sh
+kill $(cat .pidfile)
+```
+
+---
+
+## 🚀 **Future Improvements**
+- ✅ Integrate **unit tests** using Mocha or Jest (if required in the future).
+- ✅ Automate **deployment to a cloud platform** (AWS, Azure, or GCP).
+- ✅ Add **Docker support** for containerization.
+- ✅ Implement **rollback strategy** in case of deployment failures.
